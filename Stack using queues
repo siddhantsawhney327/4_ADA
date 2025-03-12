@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *queue1;
+    int *queue2;
+    int front1, front2, back1, back2, size1, size2, capacity;
+} MyStack;
+
+// Initialize the stack
+MyStack* myStackCreate() {
+    MyStack* stack = (MyStack*)malloc(sizeof(MyStack));
+    stack->capacity = 100; // Set an arbitrary capacity, adjust as needed
+    stack->queue1 = (int*)malloc(stack->capacity * sizeof(int));
+    stack->queue2 = (int*)malloc(stack->capacity * sizeof(int));
+    stack->front1 = stack->front2 = 0;
+    stack->back1 = stack->back2 = 0;
+    stack->size1 = stack->size2 = 0;
+    return stack;
+}
+
+// Push an element to the stack
+void myStackPush(MyStack* obj, int x) {
+    // Add the element to queue1
+    obj->queue1[obj->back1++] = x;
+    obj->size1++;
+}
+
+// Pop the element from the stack
+int myStackPop(MyStack* obj) {
+    // Move all elements from queue1 to queue2 except the last one
+    while (obj->size1 > 1) {
+        obj->queue2[obj->back2++] = obj->queue1[obj->front1++];
+        obj->size1--;
+        obj->size2++;
+    }
+    
+    // The last element in queue1 is the top element of the stack
+    int topElement = obj->queue1[obj->front1++];
+    obj->size1--;
+    
+    // Swap the roles of the two queues
+    int* temp = obj->queue1;
+    obj->queue1 = obj->queue2;
+    obj->queue2 = temp;
+    obj->front1 = obj->front2;
+    obj->back1 = obj->back2;
+    obj->size1 = obj->size2;
+    obj->size2 = 0;
+    
+    return topElement;
+}
+
+// Get the top element of the stack
+int myStackTop(MyStack* obj) {
+    // Move all elements from queue1 to queue2 except the last one
+    while (obj->size1 > 1) {
+        obj->queue2[obj->back2++] = obj->queue1[obj->front1++];
+        obj->size1--;
+        obj->size2++;
+    }
+    
+    // The last element in queue1 is the top element of the stack
+    int topElement = obj->queue1[obj->front1];
+    
+    // Put the last element back to queue2 for the next operation
+    obj->queue2[obj->back2++] = obj->queue1[obj->front1++];
+    obj->size1--;
+    obj->size2++;
+    
+    // Swap the roles of the two queues
+    int* temp = obj->queue1;
+    obj->queue1 = obj->queue2;
+    obj->queue2 = temp;
+    obj->front1 = obj->front2;
+    obj->back1 = obj->back2;
+    obj->size1 = obj->size2;
+    obj->size2 = 0;
+    
+    return topElement;
+}
+
+// Check if the stack is empty
+bool myStackEmpty(MyStack* obj) {
+    return obj->size1 == 0;
+}
+
+// Free the stack memory
+void myStackFree(MyStack* obj) {
+    free(obj->queue1);
+    free(obj->queue2);
+    free(obj);
+}
