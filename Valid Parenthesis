@@ -1,0 +1,35 @@
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_STACK_SIZE 10000
+
+// Function to check if the parentheses are valid
+bool isValid(char* s) {
+    char stack[MAX_STACK_SIZE];
+    int top = -1; // Initialize stack pointer
+    
+    // Iterate through the string
+    for (int i = 0; i < strlen(s); i++) {
+        char c = s[i];
+        
+        // If the character is an opening bracket, push to the stack
+        if (c == '(' || c == '{' || c == '[') {
+            stack[++top] = c;
+        } 
+        // If the character is a closing bracket
+        else {
+            if (top == -1) return false;  // Stack is empty, no matching opening bracket
+            
+            // Check if the top of the stack matches the current closing bracket
+            char topElement = stack[top--];
+            if ((c == ')' && topElement != '(') ||
+                (c == '}' && topElement != '{') ||
+                (c == ']' && topElement != '[')) {
+                return false;
+            }
+        }
+    }
+
+    // If stack is empty, all brackets matched properly
+    return top == -1;
+}
