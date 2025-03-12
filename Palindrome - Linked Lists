@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Function to reverse the linked list
+struct ListNode* reverseList(struct ListNode* head) {
+    struct ListNode* prev = NULL;
+    struct ListNode* curr = head;
+    struct ListNode* next = NULL;
+    
+    while (curr) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+
+// Function to find the middle of the linked list
+struct ListNode* findMiddle(struct ListNode* head) {
+    struct ListNode* slow = head;
+    struct ListNode* fast = head;
+    
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+
+// Main function to check if the linked list is a palindrome
+bool isPalindrome(struct ListNode* head) {
+    if (head == NULL || head->next == NULL) return true;
+
+    // Step 1: Find the middle of the list
+    struct ListNode* middle = findMiddle(head);
+    
+    // Step 2: Reverse the second half of the list
+    struct ListNode* secondHalf = reverseList(middle);
+    struct ListNode* firstHalf = head;
+    
+    // Step 3: Compare both halves
+    while (secondHalf != NULL) {
+        if (firstHalf->val != secondHalf->val) {
+            return false;  // Not a palindrome
+        }
+        firstHalf = firstHalf->next;
+        secondHalf = secondHalf->next;
+    }
+    
+    return true;  // Palindrome
+}
